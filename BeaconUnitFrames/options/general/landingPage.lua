@@ -93,7 +93,7 @@ LandingPage.optionsTable = {
 		github = {
 			type = "description",
 			name = ns.L["GitHub"]
-				.. " |cFF00AFF0https://github.com/McTalian/BeaconUnitFrames|r "
+				.. " |cFF00AFF0https://github.com/McTalian-WoW-Addons/BeaconUnitFrames|r "
 				.. ns.L["SubmitBugsAndFeatureRequestsHere"],
 			order = LandingPage.optionsOrder.GITHUB,
 		},

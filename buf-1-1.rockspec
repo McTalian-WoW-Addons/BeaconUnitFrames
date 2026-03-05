@@ -1,7 +1,7 @@
 package = "buf"
 version = "1-1"
 source = {
-   url = "https://github.com/McTalian/BeaconUnitFrames.git"
+   url = "https://github.com/McTalian-WoW-Addons/BeaconUnitFrames.git"
 }
 dependencies = {
    "lua >= 5.3",
