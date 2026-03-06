@@ -1,4 +1,4 @@
-.PHONY: lua_deps watch dev build check_untracked_files toc_check toc_update i18n_check i18n_fmt
+.PHONY: lua_deps watch dev build check_untracked_files toc_check toc_update i18n_check i18n_fmt test-ci
 
 # Variables
 ROCKSBIN := $(HOME)/.luarocks/bin
@@ -46,3 +46,7 @@ i18n_check:
 
 i18n_fmt:
 	@uv run .scripts/organize_translations.py
+
+test-ci:
+	@mkdir -p luacov-html
+	@echo "No tests configured for BeaconUnitFrames"

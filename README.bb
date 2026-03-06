@@ -35,6 +35,6 @@ This project is set up to fully support translations into all WoW-supported loca
 
 [SIZE=5]Bugs and Feature Requests[/SIZE]
 
-Please submit bugs and feature requests on the [URL=https://github.com/McTalian/BeaconUnitFrames/issues]GitHub issues page[/URL]. I want to support as many options as possible with this addon.
+Please submit bugs and feature requests on the [URL=https://github.com/McTalian-WoW-Addons/BeaconUnitFrames/issues]GitHub issues page[/URL]. I want to support as many options as possible with this addon.
 
 If you want to get involved, Pull Requests are welcome as well!
