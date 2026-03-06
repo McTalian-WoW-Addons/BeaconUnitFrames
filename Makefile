@@ -2,7 +2,7 @@
 
 # Variables
 ROCKSBIN := $(HOME)/.luarocks/bin
-WBT_REF ?= feat/centralize-i18n
+WBT_REF ?= v1-beta
 WBT_DIR := ../wow-build-tools
 
 lua_deps:
