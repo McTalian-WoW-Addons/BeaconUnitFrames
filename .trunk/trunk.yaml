@@ -57,4 +57,4 @@ actions:
       triggers:
         - git_hooks: [pre-commit]
 
-      run: uv run .scripts/organize_translations.py
+      run: uv run --project ../wow-build-tools/scripts/i18n ../wow-build-tools/scripts/i18n/organize_translations.py --locale-dir BeaconUnitFrames/locale
