@@ -56,7 +56,7 @@ Files are loaded via `index.xml` — not auto-discovered. **Adding a new `.lua` 
 
 ## Localization
 
-All user-facing strings must use `ns.L["Key"]`. Add new keys to `locale/enUS.lua` and `locale/enGB.lua` under the current version's `--#region vX.Y.Z` block. Run `make i18n_check` to validate completeness before building.
+All user-facing strings must use `ns.L["Key"]`. Add new keys to `locale/enUS.lua` under the current version's `--#region vX.Y.Z` block. Run `make i18n_check` to validate completeness before building. Run `make i18n_fmt` to auto-generate placeholder entries in other locale tables.
 
 ## Directory Conventions
 
