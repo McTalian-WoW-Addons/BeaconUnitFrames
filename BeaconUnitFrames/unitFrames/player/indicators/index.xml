@@ -2,6 +2,9 @@
     <Script file="indicators.lua"/>
     <Script file="groupIndicator.lua"/>
     <Script file="restIndicator.lua"/>
+    <Script file="statusIndicator.lua"/>
+    <Script file="portraitStatusIndicator.lua"/>
+    <Script file="nameStatusIndicator.lua"/>
     <Script file="attackIcon.lua"/>
     <Script file="readyCheckIndicator.lua"/>
     <Script file="roleIcon.lua"/>
