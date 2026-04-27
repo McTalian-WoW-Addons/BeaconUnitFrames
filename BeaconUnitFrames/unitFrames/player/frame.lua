@@ -152,26 +152,48 @@ function BUFPlayerFrame:SetFrameTexture()
 	local enable = self:DbGet("enableFrameTexture")
 	local texture = BUFPlayer.container.FrameTexture
 	local vehicleTexture = BUFPlayer.container.VehicleFrameTexture
+	local alternatePowerTexture = BUFPlayer.container.AlternatePowerFrameTexture
 	local healthBarMask = BUFPlayer.healthBarContainer.HealthBarMask
 	local manaBarMask = BUFPlayer.manaBar.ManaBarMask
+	local altPowerBar = PlayerFrame_GetAlternatePowerBar()
+	local altPowerBarMask = altPowerBar and altPowerBar.PowerBarMask or nil
 
 	if enable then
 		BUFPlayer:Unhook(texture, "Show")
 		BUFPlayer:Unhook(vehicleTexture, "Show")
+		BUFPlayer:Unhook(alternatePowerTexture, "Show")
 		BUFPlayer:Unhook(healthBarMask, "Show")
 		BUFPlayer:Unhook(manaBarMask, "Show")
+		if altPowerBarMask then
+			BUFPlayer:Unhook(altPowerBarMask, "Show")
+		end
 		if UnitInVehicle("player") then
 			vehicleTexture:Show()
+			texture:Hide()
+			alternatePowerTexture:Hide()
+		elseif PlayerFrame_GetAlternatePowerBar() ~= nil then
+			alternatePowerTexture:Show()
+			texture:Hide()
+			vehicleTexture:Hide()
 		else
 			texture:Show()
+			vehicleTexture:Hide()
+			alternatePowerTexture:Hide()
 		end
 		healthBarMask:Show()
 		manaBarMask:Show()
+		if altPowerBarMask then
+			altPowerBarMask:Show()
+		end
 	else
 		texture:Hide()
 		vehicleTexture:Hide()
+		alternatePowerTexture:Hide()
 		healthBarMask:Hide()
 		manaBarMask:Hide()
+		if altPowerBarMask then
+			altPowerBarMask:Hide()
+		end
 
 		local function HideOnShow(s)
 			s:Hide()
@@ -185,6 +207,14 @@ function BUFPlayerFrame:SetFrameTexture()
 			BUFPlayer:SecureHook(vehicleTexture, "Show", HideOnShow)
 		end
 
+		if not BUFPlayer:IsHooked(alternatePowerTexture, "Show") then
+			BUFPlayer:SecureHook(alternatePowerTexture, "Show", HideOnShow)
+		end
+
+		if not BUFPlayer:IsHooked(alternatePowerTexture, "SetShown") then
+			BUFPlayer:SecureHook(alternatePowerTexture, "SetShown", HideOnShow)
+		end
+
 		if not BUFPlayer:IsHooked(healthBarMask, "Show") then
 			BUFPlayer:SecureHook(healthBarMask, "Show", HideOnShow)
 		end
@@ -195,6 +225,14 @@ function BUFPlayerFrame:SetFrameTexture()
 
 		if not BUFPlayer:IsHooked(manaBarMask, "SetShown") then
 			BUFPlayer:SecureHook(manaBarMask, "SetShown", HideOnShow)
+		end
+
+		if altPowerBarMask and not BUFPlayer:IsHooked(altPowerBarMask, "Show") then
+			BUFPlayer:SecureHook(altPowerBarMask, "Show", HideOnShow)
+		end
+
+		if altPowerBarMask and not BUFPlayer:IsHooked(altPowerBarMask, "SetShown") then
+			BUFPlayer:SecureHook(altPowerBarMask, "SetShown", HideOnShow)
 		end
 	end
 end

@@ -75,6 +75,7 @@ BUFPlayer.optionsOrder = {
 	INDICATORS = 5,
 	HEALTH = 6,
 	POWER = 7,
+	ALT_POWER = 7.5,
 	CLASS_RESOURCES = 8,
 }
 
@@ -113,7 +114,7 @@ function BUFPlayer:RefreshConfig()
 	if not self:GetEnabled() then
 		return
 	end
-	if not self.initialized then
+	if not self.artUpdaterCreated then
 		local ArtUpdater = CreateFrame("Frame", nil, nil, "SecureHandlerAttributeTemplate")
 		ns.Mixin(ArtUpdater, ns.BUFSecureHandler)
 
@@ -125,6 +126,7 @@ function BUFPlayer:RefreshConfig()
 		ArtUpdater:SecureSetFrameRef("PlayerManaBar", PlayerFrame_GetManaBar())
 
 		ns.PlayerArtUpdater = ArtUpdater
+		self.artUpdaterCreated = true
 	end
 
 	self.Frame:RefreshConfig()
@@ -134,12 +136,12 @@ function BUFPlayer:RefreshConfig()
 	self.Indicators:RefreshConfig()
 	self.Health:RefreshConfig()
 	self.Power:RefreshConfig()
+	self.AltPower:RefreshConfig()
 	self.ClassResources:RefreshConfig()
 
-	if not self.initialized then
-		self.initialized = true
-
+	if not self.hooksInitialized then
 		local ArtUpdater = ns.PlayerArtUpdater
+		self.hooksInitialized = true
 
 		ArtUpdater:SetAttribute(
 			"buf_restore_size_position",
@@ -161,12 +163,15 @@ function BUFPlayer:RefreshConfig()
                 return
             end
 
-            -- Preparing the AlternatePowerBarArea to make it trigger OnShow/OnHide
-            if UsingAltPowerBar then
-                AlternatePowerBarArea:Hide()
-            else
-                AlternatePowerBarArea:Show()
-            end
+			local vehicleUnitState = tostring(self:GetAttribute("vehicleunit"))
+			local vehicleUIState = tostring(self:GetAttribute("vehiclestate"))
+			if vehicleUnitState == "1" or vehicleUIState == "1" then
+				AlternatePowerBarArea:Hide()
+			elseif UsingAltPowerBar then
+				AlternatePowerBarArea:Show()
+			else
+				AlternatePowerBarArea:Hide()
+			end
         ]]
 		)
 
@@ -178,50 +183,53 @@ function BUFPlayer:RefreshConfig()
 		RegisterAttributeDriver(ArtUpdater, "vehicleunit", "[@vehicle,exists] 1; 0")
 		RegisterAttributeDriver(ArtUpdater, "vehiclestate", "[vehicleui][overridebar][possessbar] 1; 0")
 
-		-- Triggers by hooking the PlayerFrameAlternatePowerBarArea which is hidden by the base UI when mounting
-		-- a vehicle. This works to securely restore the PlayerFrame's components when leaving a vehicle
-		SecureHandlerWrapScript(
-			PlayerFrameAlternatePowerBarArea,
-			"OnHide",
-			ArtUpdater,
-			[[
-            control:RunAttribute("buf_restore_size_position")
-        ]]
-		)
-		SecureHandlerWrapScript(
-			PlayerFrameAlternatePowerBarArea,
-			"OnShow",
-			ArtUpdater,
-			[[
-            control:RunAttribute("buf_restore_size_position")
-        ]]
-		)
+		local function WrapRestoreScripts(frame)
+			for _, script in ipairs({ "OnShow", "OnHide", "OnAttributeChanged" }) do
+				SecureHandlerWrapScript(
+					frame,
+					script,
+					ArtUpdater,
+					[[
+                    control:RunAttribute("buf_restore_size_position")
+                ]]
+				)
+			end
+		end
+
+		-- Trigger secure restoration on transitions that commonly happen while mounting/dismounting.
+		WrapRestoreScripts(PetFrame)
+		WrapRestoreScripts(PlayerFrameAlternatePowerBarArea)
 
 		ArtUpdater:SecureExecute([[ UsingAltPowerBar = %s ]], tostring(PlayerFrame.activeAlternatePowerBar ~= nil))
-		self:SecureHook("PlayerFrame_UpdateArt", function()
-			if not InCombatLockdown() then
-				ArtUpdater:SecureExecute(
-					[[
+		if not self:IsHooked("PlayerFrame_UpdateArt") then
+			self:SecureHook("PlayerFrame_UpdateArt", function()
+				if not InCombatLockdown() then
+					ArtUpdater:SecureExecute(
+						[[
                     UsingAltPowerBar = %s
                     self:RunAttribute("buf_restore_size_position")
                 ]],
-					tostring(PlayerFrame.activeAlternatePowerBar ~= nil)
-				)
-			else
-				local frame = CreateFrame("Frame")
-				frame:RegisterEvent("PLAYER_REGEN_ENABLED")
-				frame:SetScript("OnEvent", function(self)
-					BUFPlayer:RefreshConfig()
-					self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-				end)
-			end
-			self.Health.foregroundHandler:RefreshConfig()
-			self.Power.foregroundHandler:RefreshConfig()
-			self.Power:SetUnprotectedSize()
-			self.Indicators:RefreshConfig()
-			self.ClassResources:RefreshConfig()
-		end)
+						tostring(PlayerFrame.activeAlternatePowerBar ~= nil)
+					)
+				else
+					local frame = CreateFrame("Frame")
+					frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+					frame:SetScript("OnEvent", function(self)
+						BUFPlayer:RefreshConfig()
+						self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+					end)
+				end
+				self.Health.foregroundHandler:RefreshConfig()
+				self.Power.foregroundHandler:RefreshConfig()
+				self.Power:SetUnprotectedSize()
+				self.AltPower:RefreshConfig()
+				self.Indicators:RefreshConfig()
+				self.ClassResources:RefreshConfig()
+			end)
+		end
 	end
+
+	self.initialized = true
 end
 
 ns.BUFUnitFrames:RegisterFrame(BUFPlayer)
