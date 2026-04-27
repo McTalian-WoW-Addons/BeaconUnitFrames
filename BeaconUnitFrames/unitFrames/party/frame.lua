@@ -108,17 +108,25 @@ function BUFPartyFrame:RefreshConfig()
 
 		self.frame = PartyFrame
 
-		if not BUFParty:IsHooked(self.frame, "AnchorSelectionFrame") then
-			BUFParty:SecureHook(self.frame, "AnchorSelectionFrame", function()
-				if EditModeManagerFrame:UseRaidStylePartyFrames() then
-					return
+		-- Disable Blizzard's stock party status highlight texture for now.
+		-- We will provide BUF-owned highlight visuals separately.
+		for _, bpi in ipairs(BUFParty.frames) do
+			local statusTexture = bpi.frame.PartyMemberOverlay and bpi.frame.PartyMemberOverlay.Status
+			if statusTexture then
+				statusTexture:Hide()
+				if not BUFParty:IsHooked(statusTexture, "Show") then
+					BUFParty:SecureHook(statusTexture, "Show", function(s)
+						s:Hide()
+					end)
 				end
-				if self.frame.Selection then
-					self.frame.Selection:ClearAllPoints()
-					self.frame.Selection:SetPoint("TOPLEFT", BUFParty.frames[1].frame, "TOPLEFT")
-					self.frame.Selection:SetPoint("BOTTOMRIGHT", BUFParty.frames[#BUFParty.frames].frame, "BOTTOMRIGHT")
+				if not BUFParty:IsHooked(statusTexture, "SetShown") then
+					BUFParty:SecureHook(statusTexture, "SetShown", function(s, shown)
+						if shown then
+							s:Hide()
+						end
+					end)
 				end
-			end)
+			end
 		end
 	end
 	self:SetSize()
@@ -138,8 +146,7 @@ function BUFPartyFrame:SetSize()
 
 	if self.frame.Selection then
 		self.frame.Selection:ClearAllPoints()
-		self.frame.Selection:SetPoint("TOPLEFT", BUFParty.frames[1].frame, "TOPLEFT")
-		self.frame.Selection:SetPoint("BOTTOMRIGHT", BUFParty.frames[#BUFParty.frames].frame, "BOTTOMRIGHT")
+		self.frame.Selection:SetAllPoints(self.frame)
 	end
 end
 

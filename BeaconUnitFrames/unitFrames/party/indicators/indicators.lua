@@ -36,7 +36,7 @@ function BUFPartyIndicators:RefreshConfig()
 			bpi.indicators = {}
 		end
 	end
-	-- StatusIndicator:RefreshConfig()
+	self.StatusIndicator:RefreshConfig()
 	-- ResurrectableIndicator:RefreshConfig()
 	-- DisconnectIcon:RefreshConfig()
 	-- ReadyCheckIndicator:RefreshConfig()

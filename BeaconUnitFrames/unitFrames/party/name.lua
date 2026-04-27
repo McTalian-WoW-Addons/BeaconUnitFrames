@@ -63,6 +63,7 @@ function BUFPartyName:RefreshConfig()
 		end
 	end
 	self:RefreshFontStringConfig()
+	BUFParty:RefreshPartyHighlights()
 end
 
 function BUFPartyName:ToggleDemoMode()

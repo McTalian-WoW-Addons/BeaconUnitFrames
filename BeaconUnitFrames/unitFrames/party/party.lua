@@ -200,6 +200,54 @@ function BUFParty:HookUpdateSystemSetting()
 	end
 end
 
+function BUFParty:RefreshPartyMemberColors()
+	if self:IsDisabled() then
+		return
+	end
+	self.Health.foregroundHandler:RefreshConfig()
+	self.Power.foregroundHandler:RefreshConfig()
+end
+
+function BUFParty:RefreshPartyHighlights()
+	if self:IsDisabled() then
+		return
+	end
+	if self.Indicators and self.Indicators.StatusIndicator then
+		self.Indicators.StatusIndicator:RefreshVisuals()
+	end
+end
+
+function BUFParty:OnGroupRosterUpdate()
+	if InCombatLockdown() then
+		self.outOfCombatFrame = self.outOfCombatFrame or CreateFrame("Frame")
+		self.outOfCombatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+		self.outOfCombatFrame:SetScript("OnEvent", function(f)
+			self:RefreshPartyMemberColors()
+			self:RefreshPartyHighlights()
+			f:UnregisterEvent("PLAYER_REGEN_ENABLED")
+		end)
+		return
+	end
+
+	-- Delay one frame so Blizzard's party unit remapping is finalized first.
+	RunNextFrame(function()
+		self:RefreshPartyMemberColors()
+		self:RefreshPartyHighlights()
+	end)
+end
+
+function BUFParty:OnPartyHighlightEvent(event, unit)
+	if self:IsDisabled() then
+		return
+	end
+
+	if unit and unit ~= "target" and unit ~= "mouseover" and not string.find(unit, "party", 1, true) then
+		return
+	end
+
+	self:RefreshPartyHighlights()
+end
+
 function BUFParty:RefreshConfig()
 	self:HookUpdateSystemSetting()
 
@@ -218,6 +266,12 @@ function BUFParty:RefreshConfig()
 
 	if not self.initialized then
 		self.initialized = true
+
+		self:RegisterEvent("GROUP_ROSTER_UPDATE", "OnGroupRosterUpdate")
+		self:RegisterEvent("PLAYER_TARGET_CHANGED", "OnPartyHighlightEvent")
+		self:RegisterEvent("UPDATE_MOUSEOVER_UNIT", "OnPartyHighlightEvent")
+		self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", "OnPartyHighlightEvent")
+		self:RegisterEvent("UNIT_THREAT_LIST_UPDATE", "OnPartyHighlightEvent")
 
 		local manaBars = {}
 		for i, frameInstance in ipairs(self.frames) do
@@ -244,7 +298,7 @@ function BUFParty:RefreshConfig()
 			ArtUpdater:SetAttribute(
 				"_onattributechanged",
 				[[
-				self:RunAttribute
+				self:RunAttribute("buf_restore_size_position")
 			]]
 			)
 
@@ -293,6 +347,7 @@ function BUFParty:RefreshConfig()
 			for _, frameInstance in ipairs(self.frames) do
 				if manaBar == frameInstance.manaBar then
 					self.Power.foregroundHandler:RefreshConfig()
+					self:RefreshPartyHighlights()
 					break
 				end
 			end
