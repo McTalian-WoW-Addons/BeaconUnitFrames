@@ -10,14 +10,15 @@ local BUFPlayerIndicators = {}
 BUFPlayerIndicators.optionsOrder = {
 	GROUP_INDICATOR = 1,
 	REST_INDICATOR = 2,
-	ATTACK_ICON = 3,
-	READY_CHECK_INDICATOR = 4,
-	ROLE_ICON = 5,
-	LEADER_AND_GUIDE_ICON = 6,
-	PVP_ICON = 7,
-	PRESTIGE = 8,
-	HIT_INDICATOR = 9,
-	PLAY_TIME = 10,
+	STATUS_INDICATOR = 3,
+	ATTACK_ICON = 4,
+	READY_CHECK_INDICATOR = 5,
+	ROLE_ICON = 6,
+	LEADER_AND_GUIDE_ICON = 7,
+	PVP_ICON = 8,
+	PRESTIGE = 9,
+	HIT_INDICATOR = 10,
+	PLAY_TIME = 11,
 }
 
 local indicators = {
@@ -39,6 +40,9 @@ function BUFPlayerIndicators:RefreshConfig()
 	self.PvPIcon:RefreshConfig()
 	self.ReadyCheckIndicator:RefreshConfig()
 	self.RestIndicator:RefreshConfig()
+	-- Parent StatusIndicator owns the shared pulse driver and refreshes
+	-- both the Portrait and Name child indicators in turn.
+	self.StatusIndicator:RefreshConfig()
 	self.RoleIcon:RefreshConfig()
 	self.HitIndicator:RefreshConfig()
 end
