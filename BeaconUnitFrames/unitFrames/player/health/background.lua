@@ -24,6 +24,14 @@ backgroundHandler.optionsTable = {
 backgroundHandler.dbDefaults = {
 	useBackgroundTexture = false,
 	backgroundTexture = "None",
+	useBackdropBorder = false,
+	backdropBorderTexture = "None",
+	backdropEdgeSize = 16,
+	backdropBorderColor = { 1, 1, 1, 1 },
+	backdropInsetLeft = 0,
+	backdropInsetRight = 0,
+	backdropInsetTop = 0,
+	backdropInsetBottom = 0,
 	customColor = { 0, 0, 0, 1 }, -- BLACK_FONT_COLOR
 }
 
@@ -39,14 +47,16 @@ function backgroundHandler:RefreshConfig()
 	if not self.initialized then
 		self.initialized = true
 
-		self.background = BUFPlayer.healthBar.Background
+		-- Match health bar sizing exactly; container may be secure-sized separately.
+		self:InitBackground(BUFPlayer.healthBar)
 	end
 	self:RefreshStatusBarBackgroundConfig()
 end
 
 function backgroundHandler:RestoreDefaultBackgroundTexture()
-	local default = BLACK_FONT_COLOR
-	self.background:SetColorTexture(default.r, default.g, default.b, default.a)
+	if self.background then
+		self.background:SetTexture("Interface/Buttons/WHITE8x8")
+	end
 end
 
 BUFPlayerHealth.backgroundHandler = backgroundHandler

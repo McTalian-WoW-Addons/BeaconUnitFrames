@@ -24,6 +24,14 @@ backgroundHandler.optionsTable = {
 backgroundHandler.dbDefaults = {
 	useBackgroundTexture = false,
 	backgroundTexture = "None",
+	useBackdropBorder = false,
+	backdropBorderTexture = "None",
+	backdropEdgeSize = 16,
+	backdropBorderColor = { 1, 1, 1, 1 },
+	backdropInsetLeft = 0,
+	backdropInsetRight = 0,
+	backdropInsetTop = 0,
+	backdropInsetBottom = 0,
 	customColor = { 0, 0, 0, 0 },
 }
 
@@ -39,14 +47,19 @@ function backgroundHandler:RefreshConfig()
 	if not self.initialized then
 		self.initialized = true
 
-		self.background = BUFTarget.healthBar:CreateTexture("BUFTargetHealthBarBackground", "BACKGROUND", nil, 2)
-		self.background:SetAllPoints(BUFTarget.healthBar)
+		-- HealthBarsContainer is sized by secure attribute scripts to avoid taint,
+		-- so it can be smaller than the HealthBar that BUF actually sizes.
+		-- Use healthBar directly so the fill texture and border frame cover the
+		-- correct area and don't render on top of the bar fill.
+		self:InitBackground(BUFTarget.healthBar)
 	end
 	self:RefreshStatusBarBackgroundConfig()
 end
 
 function backgroundHandler:RestoreDefaultBackgroundTexture()
-	self.background:SetColorTexture(0, 0, 0, 0)
+	if self.background then
+		self.background:SetTexture("Interface/Buttons/WHITE8x8")
+	end
 end
 
 BUFTargetHealth.backgroundHandler = backgroundHandler
