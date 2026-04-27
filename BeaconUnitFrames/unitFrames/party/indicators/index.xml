@@ -1,4 +1,7 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
     <Script file="indicators.lua"/>
+    <Script file="statusIndicator.lua"/>
+    <Script file="portraitStatusIndicator.lua"/>
+    <Script file="healthBarStatusIndicator.lua"/>
     <Script file="roleIcon.lua"/>
 </Ui>

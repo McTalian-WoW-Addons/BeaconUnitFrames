@@ -58,6 +58,7 @@ function BUFPartyPortrait:RefreshConfig()
 	end
 
 	self:RefreshPortraitConfig()
+	BUFParty:RefreshPartyHighlights()
 end
 
 function BUFPartyPortrait:ToggleDemoMode()
