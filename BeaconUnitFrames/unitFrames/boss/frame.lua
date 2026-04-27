@@ -25,6 +25,10 @@ ns.dbDefaults.profile.unitFrames.boss.frame = {
 	enableFrameTexture = true,
 	useBackgroundTexture = false,
 	backgroundTexture = "None",
+	useBackdropBorder = false,
+	backdropBorderTexture = "None",
+	backdropEdgeSize = 16,
+	backdropBorderColor = { 1, 1, 1, 1 },
 }
 
 local frameOrder = {}
@@ -97,16 +101,6 @@ function BUFBossFrame:RefreshConfig()
 		BUFBoss.FrameInit(self)
 
 		self.frame = BossTargetFrameContainer
-
-		if not BUFBoss:IsHooked(self.frame, "AnchorSelectionFrame") then
-			BUFBoss:SecureHook(self.frame, "AnchorSelectionFrame", function()
-				if self.frame.Selection then
-					self.frame.Selection:ClearAllPoints()
-					self.frame.Selection:SetPoint("TOPLEFT", BUFBoss.frames[1].frame, "TOPLEFT")
-					self.frame.Selection:SetPoint("BOTTOMRIGHT", BUFBoss.frames[#BUFBoss.frames].frame, "BOTTOMRIGHT")
-				end
-			end)
-		end
 	end
 	self:SetSize()
 	self:SetFrameFlash()
@@ -121,6 +115,11 @@ function BUFBossFrame:SetSize()
 	local width = self:GetWidth()
 	local height = self:GetHeight() * #BUFBoss.frames
 	self.frame:SetSize(width, height)
+
+	if self.frame.Selection then
+		self.frame.Selection:ClearAllPoints()
+		self.frame.Selection:SetAllPoints(self.frame)
+	end
 end
 
 function BUFBossFrame:SetFrameFlash()
@@ -183,9 +182,16 @@ end
 function BUFBossFrame:RefreshBackgroundTexture()
 	local useBackgroundTexture = self:GetUseBackgroundTexture()
 	local backgroundTexture = self:GetBackgroundTexture()
+	local useBackdropBorder = self:GetUseBackdropBorder()
+	local backdropBorderTexture = self:GetBackdropBorderTexture()
+	local backdropEdgeSize = self:GetBackdropEdgeSize()
+	local backdropInsetLeft = self:GetBackdropInsetLeft()
+	local backdropInsetRight = self:GetBackdropInsetRight()
+	local backdropInsetTop = self:GetBackdropInsetTop()
+	local backdropInsetBottom = self:GetBackdropInsetBottom()
 
 	for _, bbi in ipairs(BUFBoss.frames) do
-		if not useBackgroundTexture then
+		if not useBackgroundTexture and not useBackdropBorder then
 			if bbi.backdropFrame then
 				bbi.backdropFrame:Hide()
 			end
@@ -195,22 +201,46 @@ function BUFBossFrame:RefreshBackgroundTexture()
 				bbi.backdropFrame:SetFrameStrata("BACKGROUND")
 			end
 
-			local bgTexturePath = ns.lsm:Fetch(ns.lsm.MediaType.BACKGROUND, backgroundTexture)
-			if not bgTexturePath then
-				bgTexturePath = "Interface/None"
+			local bgTexturePath = nil
+			if useBackgroundTexture then
+				bgTexturePath = ns.lsm:Fetch(ns.lsm.MediaType.BACKGROUND, backgroundTexture)
+				if not bgTexturePath then
+					bgTexturePath = "Interface/None"
+				end
+			end
+
+			local borderTexturePath = nil
+			if useBackdropBorder then
+				borderTexturePath = ns.lsm:Fetch(ns.lsm.MediaType.BORDER, backdropBorderTexture)
+				if not borderTexturePath then
+					borderTexturePath = "Interface/Tooltips/UI-Tooltip-Border"
+				end
 			end
 
 			bbi.backdropFrame:ClearAllPoints()
-			bbi.backdropFrame:SetAllPoints(bbi.frame)
+			bbi.backdropFrame:SetPoint("TOPLEFT", bbi.frame, "TOPLEFT", backdropInsetLeft, -backdropInsetTop)
+			bbi.backdropFrame:SetPoint(
+				"BOTTOMRIGHT",
+				bbi.frame,
+				"BOTTOMRIGHT",
+				-backdropInsetRight,
+				backdropInsetBottom
+			)
 
 			bbi.backdropFrame:SetBackdrop({
 				bgFile = bgTexturePath,
-				edgeFile = nil,
+				edgeFile = borderTexturePath,
 				tile = true,
 				tileSize = 16,
-				edgeSize = 0,
+				edgeSize = useBackdropBorder and backdropEdgeSize or 0,
 				insets = { left = 0, right = 0, top = 0, bottom = 0 },
 			})
+
+			if useBackdropBorder then
+				local r, g, b, a = self:GetBackdropBorderColor()
+				bbi.backdropFrame:SetBackdropBorderColor(r, g, b, a)
+			end
+
 			bbi.backdropFrame:Show()
 		end
 	end

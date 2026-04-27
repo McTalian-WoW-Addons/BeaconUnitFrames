@@ -24,6 +24,14 @@ backgroundHandler.optionsTable = {
 backgroundHandler.dbDefaults = {
 	useBackgroundTexture = false,
 	backgroundTexture = "None",
+	useBackdropBorder = false,
+	backdropBorderTexture = "None",
+	backdropEdgeSize = 16,
+	backdropBorderColor = { 1, 1, 1, 1 },
+	backdropInsetLeft = 0,
+	backdropInsetRight = 0,
+	backdropInsetTop = 0,
+	backdropInsetBottom = 0,
 	customColor = { 0, 0, 0, 0 },
 }
 
@@ -39,10 +47,8 @@ function backgroundHandler:RefreshConfig()
 	if not self.initialized then
 		self.initialized = true
 
-		for i, bbi in ipairs(BUFBoss.frames) do
-			bbi.health.background =
-				bbi.healthBar:CreateTexture("BUFBoss" .. i .. "HealthBarBackground", "BACKGROUND", nil, 2)
-			bbi.health.background:SetAllPoints(bbi.healthBar)
+		for _, bbi in ipairs(BUFBoss.frames) do
+			self:InitFrameBackground(bbi.health, bbi.healthBar)
 		end
 	end
 	self:RefreshStatusBarBackgroundConfig()
@@ -51,6 +57,7 @@ end
 function backgroundHandler:RefreshBackgroundTexture()
 	for _, bbi in ipairs(BUFBoss.frames) do
 		self:_RefreshBackgroundTexture(bbi.health.background)
+		self:_RefreshBorderFrame(bbi.health.borderFrame)
 	end
 end
 
@@ -62,7 +69,9 @@ end
 
 function backgroundHandler:RestoreDefaultBackgroundTexture()
 	for _, bbi in ipairs(BUFBoss.frames) do
-		bbi.health.background:SetColorTexture(0, 0, 0, 0)
+		if bbi.health.background then
+			bbi.health.background:SetTexture("Interface/Buttons/WHITE8x8")
+		end
 	end
 end
 

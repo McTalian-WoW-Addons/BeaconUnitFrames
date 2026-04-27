@@ -25,6 +25,10 @@ ns.dbDefaults.profile.unitFrames.party.frame = {
 	enableFrameTexture = true,
 	useBackgroundTexture = false,
 	backgroundTexture = "None",
+	useBackdropBorder = false,
+	backdropBorderTexture = "None",
+	backdropEdgeSize = 16,
+	backdropBorderColor = { 1, 1, 1, 1 },
 }
 
 local frameOrder = {}
@@ -218,9 +222,16 @@ end
 function BUFPartyFrame:RefreshBackgroundTexture()
 	local useBackgroundTexture = self:GetUseBackgroundTexture()
 	local backgroundTexture = self:GetBackgroundTexture()
+	local useBackdropBorder = self:GetUseBackdropBorder()
+	local backdropBorderTexture = self:GetBackdropBorderTexture()
+	local backdropEdgeSize = self:GetBackdropEdgeSize()
+	local backdropInsetLeft = self:GetBackdropInsetLeft()
+	local backdropInsetRight = self:GetBackdropInsetRight()
+	local backdropInsetTop = self:GetBackdropInsetTop()
+	local backdropInsetBottom = self:GetBackdropInsetBottom()
 
 	for _, bpi in ipairs(BUFParty.frames) do
-		if not useBackgroundTexture then
+		if not useBackgroundTexture and not useBackdropBorder then
 			if bpi.backdropFrame then
 				bpi.backdropFrame:Hide()
 			end
@@ -230,22 +241,46 @@ function BUFPartyFrame:RefreshBackgroundTexture()
 				bpi.backdropFrame:SetFrameStrata("BACKGROUND")
 			end
 
-			local bgTexturePath = ns.lsm:Fetch(ns.lsm.MediaType.BACKGROUND, backgroundTexture)
-			if not bgTexturePath then
-				bgTexturePath = "Interface/None"
+			local bgTexturePath = nil
+			if useBackgroundTexture then
+				bgTexturePath = ns.lsm:Fetch(ns.lsm.MediaType.BACKGROUND, backgroundTexture)
+				if not bgTexturePath then
+					bgTexturePath = "Interface/None"
+				end
+			end
+
+			local borderTexturePath = nil
+			if useBackdropBorder then
+				borderTexturePath = ns.lsm:Fetch(ns.lsm.MediaType.BORDER, backdropBorderTexture)
+				if not borderTexturePath then
+					borderTexturePath = "Interface/Tooltips/UI-Tooltip-Border"
+				end
 			end
 
 			bpi.backdropFrame:ClearAllPoints()
-			bpi.backdropFrame:SetAllPoints(bpi.frame)
+			bpi.backdropFrame:SetPoint("TOPLEFT", bpi.frame, "TOPLEFT", backdropInsetLeft, -backdropInsetTop)
+			bpi.backdropFrame:SetPoint(
+				"BOTTOMRIGHT",
+				bpi.frame,
+				"BOTTOMRIGHT",
+				-backdropInsetRight,
+				backdropInsetBottom
+			)
 
 			bpi.backdropFrame:SetBackdrop({
 				bgFile = bgTexturePath,
-				edgeFile = nil,
+				edgeFile = borderTexturePath,
 				tile = true,
 				tileSize = 16,
-				edgeSize = 0,
+				edgeSize = useBackdropBorder and backdropEdgeSize or 0,
 				insets = { left = 0, right = 0, top = 0, bottom = 0 },
 			})
+
+			if useBackdropBorder then
+				local r, g, b, a = self:GetBackdropBorderColor()
+				bpi.backdropFrame:SetBackdropBorderColor(r, g, b, a)
+			end
+
 			bpi.backdropFrame:Show()
 		end
 	end

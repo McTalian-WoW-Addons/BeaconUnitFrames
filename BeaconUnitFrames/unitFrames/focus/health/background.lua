@@ -24,6 +24,14 @@ backgroundHandler.optionsTable = {
 backgroundHandler.dbDefaults = {
 	useBackgroundTexture = false,
 	backgroundTexture = "None",
+	useBackdropBorder = false,
+	backdropBorderTexture = "None",
+	backdropEdgeSize = 16,
+	backdropBorderColor = { 1, 1, 1, 1 },
+	backdropInsetLeft = 0,
+	backdropInsetRight = 0,
+	backdropInsetTop = 0,
+	backdropInsetBottom = 0,
 	customColor = { 0, 0, 0, 0 },
 }
 
@@ -39,14 +47,17 @@ function backgroundHandler:RefreshConfig()
 	if not self.initialized then
 		self.initialized = true
 
-		self.background = BUFFocus.healthBar:CreateTexture("BUFFocusHealthBarBackground", "BACKGROUND", nil, 2)
-		self.background:SetAllPoints(BUFFocus.healthBar)
+		-- Same secure-sizing nuance as target: healthBarContainer is managed by
+		-- attribute scripts, so anchor to healthBar to match what BUF actually sizes.
+		self:InitBackground(BUFFocus.healthBar)
 	end
 	self:RefreshStatusBarBackgroundConfig()
 end
 
 function backgroundHandler:RestoreDefaultBackgroundTexture()
-	self.background:SetColorTexture(0, 0, 0, 0)
+	if self.background then
+		self.background:SetTexture("Interface/Buttons/WHITE8x8")
+	end
 end
 
 BUFFocusHealth.backgroundHandler = backgroundHandler

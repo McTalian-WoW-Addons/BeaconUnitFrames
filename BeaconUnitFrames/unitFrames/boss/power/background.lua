@@ -24,6 +24,14 @@ backgroundHandler.optionsTable = {
 backgroundHandler.dbDefaults = {
 	useBackgroundTexture = false,
 	backgroundTexture = "None",
+	useBackdropBorder = false,
+	backdropBorderTexture = "None",
+	backdropEdgeSize = 16,
+	backdropBorderColor = { 1, 1, 1, 1 },
+	backdropInsetLeft = 0,
+	backdropInsetRight = 0,
+	backdropInsetTop = 0,
+	backdropInsetBottom = 0,
 	customColor = { 0, 0, 0, 0 },
 }
 
@@ -39,10 +47,8 @@ function backgroundHandler:RefreshConfig()
 	if not self.initialized then
 		self.initialized = true
 
-		for i, bbi in ipairs(BUFBoss.frames) do
-			bbi.power.background =
-				bbi.manaBar:CreateTexture("BUFBoss" .. i .. "PowerBarBackground", "BACKGROUND", nil, 2)
-			bbi.power.background:SetAllPoints(bbi.manaBar)
+		for _, bbi in ipairs(BUFBoss.frames) do
+			self:InitFrameBackground(bbi.power, bbi.manaBar)
 		end
 	end
 	self:RefreshStatusBarBackgroundConfig()
@@ -51,6 +57,7 @@ end
 function backgroundHandler:RefreshBackgroundTexture()
 	for _, bbi in ipairs(BUFBoss.frames) do
 		self:_RefreshBackgroundTexture(bbi.power.background)
+		self:_RefreshBorderFrame(bbi.power.borderFrame)
 	end
 end
 
@@ -62,7 +69,9 @@ end
 
 function backgroundHandler:RestoreDefaultBackgroundTexture()
 	for _, bbi in ipairs(BUFBoss.frames) do
-		bbi.power.background:SetColorTexture(0, 0, 0, 0)
+		if bbi.power.background then
+			bbi.power.background:SetTexture("Interface/Buttons/WHITE8x8")
+		end
 	end
 end
 
