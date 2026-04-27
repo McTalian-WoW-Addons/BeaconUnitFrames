@@ -51,6 +51,8 @@ ns.dbDefaults.profile.unitFrames.player.name = {
 	fontShadowOffsetY = -1,
 	justifyH = "LEFT",
 	justifyV = "MIDDLE",
+	textDrawLayer = "ARTWORK",
+	textSublevel = 0,
 }
 
 ns.AddTextCustomizableOptions(BUFPlayerName.optionsTable.args)

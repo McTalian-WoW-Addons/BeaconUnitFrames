@@ -39,6 +39,8 @@ BUFTargetLevel.dbDefaults = {
 	fontShadowOffsetX = 1,
 	fontShadowOffsetY = -1,
 	justifyH = "CENTER",
+	textDrawLayer = "ARTWORK",
+	textSublevel = 0,
 }
 
 ns.BUFFontString:ApplyMixin(BUFTargetLevel)

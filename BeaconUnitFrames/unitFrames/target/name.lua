@@ -49,6 +49,8 @@ ns.dbDefaults.profile.unitFrames.target.name = {
 	fontShadowOffsetY = -1,
 	justifyH = "LEFT",
 	justifyV = "MIDDLE",
+	textDrawLayer = "ARTWORK",
+	textSublevel = 0,
 }
 
 ns.options.args.target.args.targetName = BUFTargetName.optionsTable
