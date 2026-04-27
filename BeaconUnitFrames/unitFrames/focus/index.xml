@@ -8,5 +8,6 @@
     <Include file="health/index.xml"/>
     <Include file="power/index.xml"/>
     <Include file="indicators/index.xml"/>
+    <Script file="castBar.lua"/>
     <Script file="buffs.lua"/>
 </Ui>

@@ -85,7 +85,8 @@ BUFTarget.optionsOrder = {
 	INDICATORS = 6,
 	HEALTH = 7,
 	POWER = 8,
-	BUFFS = 9,
+	CAST_BAR = 9,
+	BUFFS = 10,
 }
 
 function BUFTarget.IsDisabled()
@@ -143,6 +144,7 @@ function BUFTarget:RefreshConfig()
 	self.Power:RefreshConfig()
 	self.ReputationBar:RefreshConfig()
 	self.Buffs:RefreshConfig()
+	self.CastBar:RefreshConfig()
 
 	if not self.initialized then
 		self.initialized = true
