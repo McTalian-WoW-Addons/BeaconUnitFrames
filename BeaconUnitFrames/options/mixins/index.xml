@@ -3,6 +3,7 @@
     <Script file="sizable.lua"/>
     <Script file="scalable.lua"/>
     <Script file="levelable.lua"/>
+    <Script file="framePositionable.lua"/>
     <Script file="fontable.lua"/>
     <Script file="statusBarTexturable.lua"/>
     <Script file="colorable.lua"/>
@@ -15,5 +16,6 @@
     <Script file="textCustomizable.lua"/>
     <Script file="atlasSizable.lua"/>
     <Script file="justifiable.lua"/>
+    <Script file="textLayerable.lua"/>
     <Script file="secureHandler.lua"/>
 </Ui>

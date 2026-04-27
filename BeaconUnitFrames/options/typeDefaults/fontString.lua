@@ -10,6 +10,7 @@ function ns.AddFontStringOptions(optionsTable, _orderMap)
 	ns.AddSizableOptions(optionsTable, orderMap)
 	ns.AddFontOptions(optionsTable, orderMap)
 	ns.AddJustifiableOptions(optionsTable, orderMap)
+	ns.AddTextLayerOptions(optionsTable, orderMap)
 	ns.AddDemoOptions(optionsTable, orderMap)
 end
 
@@ -18,14 +19,14 @@ end
 ---@field fontString FontString
 ---@field demoText string?
 
----@class BUFFontString: FontStringHandler, Justifiable, Fontable, Sizable, Positionable, Sizable, Demoable
+---@class BUFFontString: FontStringHandler, Justifiable, Fontable, Sizable, Positionable, TextLayerable, Demoable
 local BUFFontString = {}
 
 --- Apply mixins to a BUFFontString
 ---@param self BUFFontString
 ---@param handler BUFConfigHandler
 function BUFFontString:ApplyMixin(handler)
-	ns.Mixin(handler, ns.Demoable, ns.Sizable, ns.Positionable, ns.Justifiable, ns.Fontable, self)
+	ns.Mixin(handler, ns.Demoable, ns.Sizable, ns.Positionable, ns.Justifiable, ns.Fontable, ns.TextLayerable, self)
 
 	if handler.optionsTable then
 		ns.AddFontStringOptions(handler.optionsTable.args, handler.optionsOrder)
@@ -63,12 +64,17 @@ function BUFFontString:UpdateJustification()
 	self:_UpdateJustification(self.fontString)
 end
 
+function BUFFontString:SetTextLayer()
+	self:_SetTextLayer(self.fontString)
+end
+
 function BUFFontString:RefreshFontStringConfig()
 	self:SetPosition()
 	self:SetSize()
 	self:SetFont()
 	self:SetFontShadow()
 	self:UpdateJustification()
+	self:SetTextLayer()
 end
 
 ns.BUFFontString = BUFFontString
