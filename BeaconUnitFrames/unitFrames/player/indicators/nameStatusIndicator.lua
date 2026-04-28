@@ -115,6 +115,11 @@ end
 function BUFPlayerNameStatusIndicator:SetPulse(_, v)
 	self:DbSet("pulse", v)
 	self:RefreshVisuals()
+	-- Notify the coordinator so it can start/stop the pulse driver as needed.
+	-- Only do this if the coordinator is already initialized to avoid issues during setup.
+	if BUFPlayerIndicators.StatusIndicator.initialized then
+		BUFPlayerIndicators.StatusIndicator:UpdatePulseState()
+	end
 end
 
 function BUFPlayerNameStatusIndicator:GetShowCombat()
