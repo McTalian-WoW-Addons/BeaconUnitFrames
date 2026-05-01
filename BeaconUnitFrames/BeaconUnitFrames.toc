@@ -1,4 +1,4 @@
-## Interface: 120005
+## Interface: 120005, 120007
 ## Title: |c66FFFF00Beacon|r UnitFrames
 ## Author: McTalian
 ## Version: @project-version@
