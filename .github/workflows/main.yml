@@ -15,7 +15,7 @@ jobs:
       actions: write
       pull-requests: write
       issues: write
-    uses: McTalian-WoW-Addons/wow-build-tools/.github/workflows/ci.yml@v1-beta
+    uses: McTalian-WoW-Addons/wow-build-tools/.github/workflows/ci.yml@v1.0.0
     with:
       addon-name: BeaconUnitFrames
       rockspec-name: buf-1-1.rockspec
