@@ -95,7 +95,7 @@ def convert_readme_to_bb():
     with open(README_bb_file, "w") as f:
         f.writelines(converted_lines)
 
-    print(f"Converted README.md to README.bb")
+    print("Converted README.md to README.bb")
     return converted_lines
 
 
