@@ -17,11 +17,11 @@ jobs:
       actions: write
       pull-requests: write
       checks: write
-    uses: McTalian-WoW-Addons/wow-build-tools/.github/workflows/pr-checks.yml@v1-beta
+    uses: McTalian-WoW-Addons/wow-build-tools/.github/workflows/pr-checks.yml@v1
     with:
       addon-name: BeaconUnitFrames
       rockspec-name: buf-1-1.rockspec
       i18n-enabled: true
       trunk-enabled: true
-      wbt-ref: v1-beta
+      wbt-ref: v1
     secrets: inherit
