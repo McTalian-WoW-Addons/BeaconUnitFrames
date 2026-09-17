@@ -52,3 +52,6 @@ luacov-html
 
 node_modules
 
+
+.claude/worktrees/
+.claude/.last-checks.json
