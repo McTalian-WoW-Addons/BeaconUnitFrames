@@ -121,11 +121,15 @@ function BUFTargetReputationBar:RefreshColor()
 	if useCustomColor then
 		r, g, b, a = unpack(self:DbGet("customColor"))
 	elseif useClassColor and (not useReactionColor or UnitPlayerControlled("target")) then
-		local _, class = UnitClass("target")
-		r, g, b = GetClassColor(class)
-	elseif useReactionColor then
-		r, g, b = GameTooltip_UnitColor("target")
-	else
+		-- nil when the unit's identity is secret, which falls through to the reaction color
+		r, g, b = ns.GetUnitClassColor("target")
+	end
+
+	if r == nil and useReactionColor then
+		r, g, b = ns.GetUnitReactionColor("target")
+	end
+
+	if r == nil then
 		return
 	end
 
