@@ -241,7 +241,7 @@ function BUFPartyStatusIndicator:ResolveStateForUnit(unit)
 	local mouseoverColor = self:DbGet("mouseoverColor")
 
 	for _, state in ipairs(priorityOrder) do
-		if state == "aggro" and showAggro then
+		if state == "aggro" and showAggro and not ns.IsUnitThreatStateSecret(unit) then
 			local threatStatus = UnitThreatSituation(unit)
 			if threatStatus and threatStatus > 0 then
 				local r, g, b, a
@@ -253,9 +253,19 @@ function BUFPartyStatusIndicator:ResolveStateForUnit(unit)
 				end
 				return "aggro", r, g, b, a
 			end
-		elseif state == "target" and showTarget and UnitIsUnit(unit, "target") then
+		elseif
+			state == "target"
+			and showTarget
+			and not ns.IsUnitComparisonSecret(unit, "target")
+			and UnitIsUnit(unit, "target")
+		then
 			return "target", unpack(targetColor)
-		elseif state == "mouseover" and showMouseover and UnitIsUnit(unit, "mouseover") then
+		elseif
+			state == "mouseover"
+			and showMouseover
+			and not ns.IsUnitComparisonSecret(unit, "mouseover")
+			and UnitIsUnit(unit, "mouseover")
+		then
 			return "mouseover", unpack(mouseoverColor)
 		end
 	end

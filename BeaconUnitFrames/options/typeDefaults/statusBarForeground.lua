@@ -117,11 +117,13 @@ function StatusBarForeground:_GetOptionsBasedColor(unit)
 	if useCustomColor then
 		r, g, b, a = self:GetCustomColor()
 	elseif useClassColor and (not useReactionColor or UnitPlayerControlled(unit)) then
-		local _, class = UnitClass(trackedUnit)
-		r, g, b = GetClassColor(class)
-	elseif useReactionColor then
-		r, g, b = GameTooltip_UnitColor(trackedUnit)
-	elseif usePowerColor then
+		-- nil when the unit's identity is secret, which falls through to the reaction color
+		r, g, b = ns.GetUnitClassColor(trackedUnit)
+	end
+
+	if r == nil and useReactionColor then
+		r, g, b = ns.GetUnitReactionColor(trackedUnit)
+	elseif r == nil and usePowerColor then
 		if trackedUnit == nil or not UnitExists(trackedUnit) then
 			return
 		end

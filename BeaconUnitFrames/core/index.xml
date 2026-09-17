@@ -1,5 +1,7 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
     <Script file="core.lua"/>
+    <Script file="secrets.lua"/>
+    <Script file="unitColor.lua"/>
     <Script file="db.lua"/>
     <Script file="dbHandler.lua"/>
     <Script file="broker.lua"/>
